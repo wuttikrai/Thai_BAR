@@ -1,0 +1,49 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap');
+
+:root {
+  --primary: #1e3a5f;
+  --primary-light: #2d5a8a;
+  --accent: #c9a227;
+  --accent-light: #e8d48a;
+  --background: #f8f9fa;
+  --surface: #ffffff;
+  --text-primary: #1a1a2e;
+  --text-secondary: #4a4a68;
+  --border: #e2e8f0;
+}
+
+body {
+  font-family: 'Sarabun', system-ui, sans-serif;
+  background-color: var(--background);
+  color: var(--text-primary);
+}
+
+@layer components {
+  .legal-card {
+    @apply bg-white rounded-lg shadow-sm border border-gray-100 p-6 transition-all duration-200;
+  }
+  
+  .legal-card:hover {
+    @apply shadow-md border-gray-200;
+  }
+  
+  .filter-btn {
+    @apply px-4 py-2 rounded-full text-sm font-medium transition-all duration-200;
+  }
+  
+  .filter-btn-active {
+    @apply bg-[#1e3a5f] text-white;
+  }
+  
+  .filter-btn-inactive {
+    @apply bg-white text-gray-600 border border-gray-200 hover:bg-gray-50;
+  }
+  
+  .search-input {
+    @apply w-full px-5 py-4 text-lg border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent transition-all duration-200;
+  }
+}

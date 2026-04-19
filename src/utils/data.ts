@@ -4,11 +4,20 @@ import Papa from 'papaparse';
 export async function loadLegalData(): Promise<LegalEntry[]> {
   const entries: LegalEntry[] = [];
   
-  // Load both CSV files
-  const files = ['Bar_Editorials_1.csv', 'Bar_Editorials_2.csv'];
+  // Use NEXT_PUBLIC_BASE_PATH so the URL is correct on both local dev and GitHub Pages.
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+
+  // Load both CSV files and map them to Section (volume)
+  const files = [
+    { file: 'Bar_Editorials_1.csv', section: 1 },
+    { file: 'Bar_Editorials_2.csv', section: 2 },
+  ];
   
-  for (const file of files) {
-    const response = await fetch(`/data/${file}`);
+  for (const { file, section } of files) {
+    const response = await fetch(`${basePath}/data/${file}`);
+    if (!response.ok) {
+      throw new Error(`Failed to load CSV: ${file} (${response.status})`);
+    }
     const text = await response.text();
     
     Papa.parse(text, {
@@ -20,7 +29,7 @@ export async function loadLegalData(): Promise<LegalEntry[]> {
             entries.push({
               id: `${file}-${index}`,
               year: parseInt(row.year),
-              volume: parseInt(row.volume) || 1,
+              volume: section,
               fact: row.fact || '',
               question: row.Question || '',
               judgement: row.judgement || '',

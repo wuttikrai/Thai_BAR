@@ -3,12 +3,12 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { LegalEntry, FilterState, ViewMode } from '@/types';
 import SearchBar from '@/components/SearchBar';
-import CategoryFilter from '@/components/CategoryFilter';
 import YearVolumeFilter from '@/components/YearVolumeFilter';
 import ResultList from '@/components/ResultList';
 import DetailedView from '@/components/DetailedView';
 import CardsView from '@/components/CardsView';
 import Statistics from '@/components/Statistics';
+import { loadLegalData } from '@/utils/data';
 
 export default function Home() {
   const [filters, setFilters] = useState<FilterState>({
@@ -25,6 +25,7 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>('list');
   const [currentIndex, setCurrentIndex] = useState(0);
+  const allEntriesRef = useRef<LegalEntry[] | null>(null);
 
   // Fetch data from API - using ref to get latest filters
   const fetchResults = useCallback(async () => {
@@ -35,6 +36,10 @@ export default function Home() {
     const currentFilters = filtersRef.current;
 
     try {
+      // GitHub Pages static export has no API routes. Try API first for local/Node deploy,
+      // then fallback to client-side CSV loading + filtering.
+      let sourceData: LegalEntry[] = [];
+
       const params = new URLSearchParams();
       if (currentFilters.category !== 'ทั้งหมด') params.set('category', currentFilters.category);
       if (currentFilters.year) params.set('year', currentFilters.year);
@@ -42,22 +47,63 @@ export default function Home() {
       if (currentFilters.searchQuery) params.set('q', currentFilters.searchQuery);
       if (currentFilters.searchColumn && currentFilters.searchColumn !== 'all') params.set('column', currentFilters.searchColumn);
 
-      const response = await fetch(`/api/legal?${params.toString()}`);
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch results');
+      try {
+        const response = await fetch(`/api/legal?${params.toString()}`);
+        if (response.ok) {
+          const data = await response.json();
+          if (Array.isArray(data?.data)) {
+            setResults(data.data);
+            setTotalCount(data.total ?? data.data.length);
+            return;
+          }
+        }
+      } catch {
+        // Ignore API errors and fallback to static CSV mode below.
       }
 
-      const data = await response.json();
-      
-      // Handle both API response and fallback data
-      if (data.data) {
-        setResults(data.data);
-        setTotalCount(data.total);
-      } else if (Array.isArray(data)) {
-        setResults(data);
-        setTotalCount(data.length);
+      if (!allEntriesRef.current) {
+        allEntriesRef.current = await loadLegalData();
       }
+      sourceData = allEntriesRef.current;
+
+      let filtered = sourceData;
+
+      if (currentFilters.category !== 'ทั้งหมด') {
+        filtered = filtered.filter((entry) => entry.law === currentFilters.category);
+      }
+
+      if (currentFilters.year) {
+        filtered = filtered.filter((entry) => entry.year === parseInt(currentFilters.year));
+      }
+
+      if (currentFilters.volume) {
+        filtered = filtered.filter((entry) => entry.volume === parseInt(currentFilters.volume));
+      }
+
+      if (currentFilters.searchQuery) {
+        const q = currentFilters.searchQuery.toLowerCase();
+        const column = currentFilters.searchColumn || 'all';
+        const colMap: Record<string, (entry: LegalEntry) => boolean> = {
+          all: (entry) =>
+            entry.question.toLowerCase().includes(q) ||
+            entry.fact.toLowerCase().includes(q) ||
+            entry.judgement.toLowerCase().includes(q) ||
+            (entry.comment?.toLowerCase().includes(q) ?? false) ||
+            (entry.misc?.toLowerCase().includes(q) ?? false),
+          fact: (entry) => entry.fact.toLowerCase().includes(q),
+          question: (entry) => entry.question.toLowerCase().includes(q),
+          judgement: (entry) => entry.judgement.toLowerCase().includes(q),
+          law: (entry) => entry.law.toLowerCase().includes(q),
+          comment: (entry) => entry.comment?.toLowerCase().includes(q) ?? false,
+          misc: (entry) => entry.misc?.toLowerCase().includes(q) ?? false,
+        };
+
+        const filterFn = colMap[column] || colMap.all;
+        filtered = filtered.filter(filterFn);
+      }
+
+      setResults(filtered);
+      setTotalCount(filtered.length);
     } catch (err: any) {
       console.error('Error fetching results:', err);
       setError(err.message || 'เกิดข้อผิดพลาดในการค้นหา');
@@ -127,7 +173,7 @@ export default function Home() {
       <header className="bg-[#1e3a5f] text-white py-6 md:py-8 px-4">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-2xl md:text-4xl font-bold mb-2">
-            ระบบค้นหาคำพิพากษาฎีกา
+            ระบบค้นหาบทบรรณาธิการเนติ สมัยที่ 63 - สมัยที่ 78 ภาค 1
           </h1>
           <p className="text-gray-300 text-sm md:text-lg">
             ค้นหาข้อมูลทางกฎหมาย อาญา แพ่ง วิธีพิจารณาความอาญา วิธีพิจารณาความแพ่ง
@@ -143,14 +189,6 @@ export default function Home() {
           initialValue={filters.searchQuery}
           initialColumn={filters.searchColumn}
         />
-
-        {/* Category Filters */}
-        <div className="mt-5 md:mt-6">
-          <CategoryFilter 
-            selected={filters.category} 
-            onChange={handleCategoryChange} 
-          />
-        </div>
 
         {/* Year and Volume Filters */}
         <div className="mt-4">

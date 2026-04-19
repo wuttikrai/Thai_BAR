@@ -4,11 +4,8 @@ import fs from 'fs';
 import path from 'path';
 
 // CSV-based data storage (fallback when MySQL is not available)
-let cachedData: LegalEntry[] | null = null;
 
 function loadCSVData(): LegalEntry[] {
-  if (cachedData) return cachedData;
-  
   const entries: LegalEntry[] = [];
   // Section mapping: Bar_Editorials_1.csv = Section 1, Bar_Editorials_2.csv = Section 2
   const csvFiles = [
@@ -47,7 +44,6 @@ function loadCSVData(): LegalEntry[] {
     }
   }
   
-  cachedData = entries;
   return entries;
 }
 

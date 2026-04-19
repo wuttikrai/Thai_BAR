@@ -5,10 +5,11 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "postbuild": "node -e \"require('fs').closeSync(require('fs').openSync('out/.nojekyll','w'))\"",
     "start": "next start",
     "lint": "next lint",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d out"
+    "deploy": "gh-pages -d out --dotfiles"
   },
   "homepage": "https://wuttikrai.github.io/Thai_BAR",
   "dependencies": {

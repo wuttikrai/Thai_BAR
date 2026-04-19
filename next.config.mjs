@@ -2,6 +2,9 @@
 const nextConfig = {
   output: 'export',
   basePath: '/Thai_BAR',
+  env: {
+    NEXT_PUBLIC_BASE_PATH: '/Thai_BAR',
+  },
   images: {
     unoptimized: true,
   },

@@ -1,12 +1,14 @@
 # Bar Editorials Reader
 
+🌐 **Live Website**: [https://wuttikrai.github.io/Thai_BAR/](https://wuttikrai.github.io/Thai_BAR/)
+
 A Next.js + TypeScript web application for law students to read court judgments (คำพิพากษาฎีกา) from CSV data.
 
 ## Features
 
 - **Filter by Section (ภาค)**: 
   - ภาค 1 (from Bar_Editorials_1.csv) - Years 63-78
-  - ภาค 2 (from Bar_Editorials_2.csv) - Years 63-77
+  - ภาค 2 (from Bar_Editorials_2.csv) - Years 63-78
 - **Filter by Year (สมัย)**: Select academic year
 - **Filter by Law (กฎหมาย)**: อาญา, แพ่ง, วิ.อาญา, วิ.แพ่ง
 - **Search**: Full-text search across all fields

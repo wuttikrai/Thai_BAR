@@ -173,7 +173,7 @@ export default function Home() {
       <header className="bg-[#1e3a5f] text-white py-6 md:py-8 px-4">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-2xl md:text-4xl font-bold mb-2">
-            ระบบค้นหาบทบรรณาธิการเนติ สมัยที่ 63 - สมัยที่ 78 ภาค 1
+            ระบบค้นหาบทบรรณาธิการเนติ สมัยที่ 63 - สมัยที่ 78
           </h1>
           <p className="text-gray-300 text-sm md:text-lg">
             ค้นหาข้อมูลทางกฎหมาย อาญา แพ่ง วิธีพิจารณาความอาญา วิธีพิจารณาความแพ่ง

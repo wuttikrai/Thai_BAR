@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "ค้นหาคำพิพากษาฎีกา | Legal Search",
-  description: "ระบบค้นหาข้อมูลทางกฎหมาย - คำพิพากษาฎีกา",
+  title: "ระบบค้นหาบทบรรณาธิการเนติ สมัยที่ 63 - สมัยที่ 78",
+  description: "ระบบค้นหาบทบรรณาธิการเนติ สมัยที่ 63 - สมัยที่ 78",
 };
 
 export default function RootLayout({

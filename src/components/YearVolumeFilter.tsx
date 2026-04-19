@@ -12,12 +12,13 @@ interface YearVolumeFilterProps {
 // - Section 1 (ภาค 1): Bar_Editorials_1.csv - Years 63-78
 // - Section 2 (ภาค 2): Bar_Editorials_2.csv - Years 63-78
 const sections = [
-  { value: '1', label: 'ภาค 1 (จาก Bar_Editorials_1)' },
-  { value: '2', label: 'ภาค 2 (จาก Bar_Editorials_2)' },
+  { value: '1', label: 'ภาค 1 ' },
+  { value: '2', label: 'ภาค 2 ' },
 ];
 
 // Years available per section
 const yearsBySection: Record<string, number[]> = {
+
   '1': [78, 77, 76, 75, 74, 73, 72, 71, 70, 69, 68, 67, 66, 65, 64, 63],
   '2': [78, 77, 76, 75, 74, 73, 72, 71, 70, 69, 68, 67, 66, 65, 64, 63],
 };
